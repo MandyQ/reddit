@@ -2,9 +2,9 @@ import 'babel-polyfill' //解析新的API
 
 import React from 'react'
 import { render } from 'react-dom'
-import Picker from './components/Picker'
+import Root from './containers/Root'
 
 render(
-	<Picker />,
+	<Root />,
 	document.getElementById('root')
 )

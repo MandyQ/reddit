@@ -4,7 +4,7 @@ import PropTypes from 'prop-types'
 class Picker extends Component {
 	render() {
 		const { value, onChange, options} = this.props
-
+		
 		return (
 			<div>
 				<h1>{value}</h1>
@@ -17,7 +17,6 @@ class Picker extends Component {
 		)
 	}
 }
-export default Picker
 
 Picker.propTypes = {
 	options: PropTypes.arrayOf(
@@ -26,6 +25,8 @@ Picker.propTypes = {
 	value:PropTypes.string.isRequired,
 	onChange:PropTypes.func.isRequired
 }
+
+export default Picker
 
 // 状态提升：把数据提升到select 而不是 存在option里
 //option 就是select里存的value

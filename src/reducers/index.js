@@ -1,11 +1,13 @@
 import { combineReducers } from 'redux'
 // import { }
 
-let selectedSubreddit = (state='Reactjs',action) =>{
+function selectedSubreddit(state='Reactjs',action){
   switch (action.type) {
     case 'SELECTED_SUBREDDIT':
-      return action.selectedSubreddit
+      return action.subreddit
     default:
       return state
   }
 }
+
+export default selectedSubreddit
