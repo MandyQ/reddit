@@ -6,9 +6,13 @@ export default class Posts extends Component {
 		return(
 			<ul>
 				{this.props.posts.map((post,i) => 
-					<li>{post.title}</li>
+					<li key={i}>{post.title}</li>
 				)}				
 			</ul>
 		)
 	}
+}
+
+Posts.propTypes={
+	posts:PropTypes.array.isRequired
 }

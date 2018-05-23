@@ -3,7 +3,7 @@ import { selectSubreddit, invalidSubreddit, requestPosts, receivePosts } from '.
 
 function selectedSubreddit(state='Reactjs',action){
   switch (action.type) {
-    case 'SELECTED_SUBREDDIT':
+    case 'SELECT_SUBREDDIT':
       return action.subreddit
     default:
       return state
@@ -18,14 +18,15 @@ function selectedSubreddit(state='Reactjs',action){
 // （数据多的情况下还需 fetchPageCount, nextPageUrl）
 
 function posts( state={isFetching:false, invalid:false, items:[]}, action ) { //给state设置默认值
-  console.log(state)
   switch ( action.type ) {
     case 'INVALID_SUBREDDIT':
       return Object.assign( {}, state, {invalid:true} )
     case 'REQUEST_POSTS':
-      return Object.assign( {}, state, {isFetching:true} )
-    case 'RECEIVE_POSTS':
-      return Object.assign( {}, state, {items:action.posts, lastUpdated:action.receivedAt} )
+      return Object.assign( {}, state, {isFetching:true, invalid:false} )
+    case 'RECEIVE_POSTS':  
+// console.log( Object.assign( {}, state, {isFetching:false, invalid:false, items:action.posts, lastUpdated:action.receivedAt}) )
+//第三个参数，相同的键(不同的值) 后者的值会覆盖前者，注意的是从request 到receive，isFetching的值会变 从true到false.其他相同的键（相同值，可不写，会自动用默认值）      
+      return Object.assign( {}, state, {isFetching:false, items:action.posts, lastUpdated:action.receivedAt})   
     default:
       return state
   }

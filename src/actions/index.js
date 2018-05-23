@@ -32,7 +32,7 @@ export const receivePosts = (subreddit, json) => {
     type:'RECEIVE_POSTS',
     subreddit,
     posts:json.data.children.map(child => child.data),
-    receivedAt:Date.now()
+    receivedAt:Date.now()   //返回毫秒数  （new Date（）可接收毫秒数为参数）
   }
 }
 
@@ -44,15 +44,18 @@ function fetchPosts (subreddit){
   return dispatch => {
     dispatch(requestPosts(subreddit))
     return fetch(`https://www.reddit.com/r/${subreddit}.json`)
-    .then( res => res.json()) //fetch里response自带的方法，把返回的res转换为json对象
-    .then( json => dispatch(receivePosts(subreddit, json)) ) //把请求回的数据传递给receivePosts函数，并分发该函数
+    .then( res => res.json()) //json()  fetch里response自带的方法，把返回的res转换为json对象
+    .then( json => 
+      // 可以多次 dispatch！
+      // 这里，使用 API 请求结果来更新应用的 state。
+      dispatch(receivePosts(subreddit, json)) ) 
   }
 }
 
 
 //工具函数：
 function shouldFetchPosts(state,subreddit) {
-  const posts = state.postsBySubreddit[subreddit]  //
+  const posts = state.postsBySubreddit[subreddit]  
   if(!posts) {
     return true; //数据还未请求到，ifFetching 为true
   }else if(posts.isFetching) {

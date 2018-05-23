@@ -15,10 +15,27 @@ class AsyncApp extends Component {
 		this.handleChange = this.handleChange.bind(this)	
 		this.handleRefreshClick = this.handleRefreshClick.bind(this)
 	}
+	componentDidMount(){  // 在第一次渲染后调用(真实的DOM被渲染出来后调用)
+		//首页加载时发送请求获取数据
+
+		const { dispatch, selectedSubreddit } = this.props
+
+		 dispatch(invalidSubreddit(selectedSubreddit)) //点击刷新列表
+		dispatch(fetchPostsIfNeeded(selectedSubreddit)) //是否发送请求获取数据
+	}
+
+	componentWillReceiveProps(nextProps){ // 在组件接收到一个新的 prop (更新后)时被调用 
+		//select框更换标题		
+		if(nextProps.selectedSubreddit !== this.props.selectedSubreddit) {
+			const {dispatch, selectedSubreddit} = nextProps
+			dispatch(fetchPostsIfNeeded(selectedSubreddit)) //是否发送请求获取数据
+		}
+	}
 
 	handleChange(nextSubreddit) {
 		this.props.dispatch(selectSubreddit(nextSubreddit))
 	}
+
 	handleRefreshClick(e) {
 		e.preventDefault()
 
@@ -29,21 +46,33 @@ class AsyncApp extends Component {
 	}
 
 	render() {
-		const { selectedSubreddit, lastUpdated, posts } = this.props
+		const { selectedSubreddit, lastUpdated, posts, isFetching} = this.props
 
 		return (
 			<div>
 				<Picker value={selectedSubreddit} 
 								onChange={this.handleChange} 
-								options={['Reactjs','Fronted']} />	
+								options={['Reactjs','Frontend']} />	
 				<p>
-					<span> Last updated at {new Date(lastUpdated).toLocaleTimeString()}.{' '}</span>
-					<a href="#" onClick={this.handleRefreshClick}>Refresh</a>
+					{lastUpdated &&
+						<span> Last updated at {new Date(lastUpdated).toLocaleTimeString()}.{' '}</span> 					
+					}
+					  {/* 请求未完成之前 Refresh按钮 隐藏 */}
+					{!isFetching && 
+						<a href="javacript:;" onClick={this.handleRefreshClick}>Refresh</a>
+					}				
 				</p>
-				<div>
-					<Posts posts={posts} /> 
-					
-				</div>				
+				{isFetching && posts.length === 0 &&
+					<h2>Loading...</h2>
+				}
+				{!isFetching && posts.length === 0 &&
+					<h2>Ooops~  empty</h2>
+				}
+				{posts.length > 0  &&
+					<div style={{ opacity: isFetching ? 0.5 :1 }}>
+						<Posts posts={posts} /> 					
+					</div>	
+				}						
 			</div>			
 		)
 	}
@@ -51,7 +80,7 @@ class AsyncApp extends Component {
 
 
 // 给组件内的每一个变量进行类型检测
-AsyncApp.propTypes ={
+AsyncApp.propTypes = {
 	selectedSubreddit:PropTypes.string.isRequired,
 	lastUpdated:PropTypes.number,
 	isFetching:PropTypes.bool.isRequired,
@@ -74,10 +103,7 @@ export default connect(mapStateToProps)(AsyncApp)
 
 
 
-// bug：
-// 首页进来时间日期格式不对，没有默认数据列表
-//点击refresh以后正常
-//应该跟钩子函数有关
+
 
 
 
